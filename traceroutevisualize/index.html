@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="http://csvoss.scripts.mit.edu/traceroute/jquery-1.9.1.js"> </script>
+<script src="http://csvoss.scripts.mit.edu/traceroute/jquery-ui-1.10.3.custom.js"> </script>
+<script src="http://csvoss.scripts.mit.edu/traceroute/jquery-ui-1.10.3.custom.min.js"> </script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqovMv0dLkg_0b4Iuz9HHgRihDg8Qm7u8&sensor=false"></script>
+<script type="text/javascript" src="http://csvoss.scripts.mit.edu/traceroute/tracescript.js"> </script>
+<link rel="stylesheet" type="text/css" href="http://csvoss.scripts.mit.edu/traceroute/jquery-ui-1.10.3.custom.min.css">
+<script>
+
+$(document).ready(function(){
+  $("#suggestions").hide();
+  $("#hide").hide();
+
+  $(function() {
+    $("#tabs").tabs();
+  });
+  $("#hide").click(function(){
+    $("#show").show();
+    $("#hide").hide();
+    $("#suggestions").hide("blind");
+  });
+
+  $("#show").click(function(){
+    $("#show").hide();
+    $("#hide").show();
+    $("#suggestions").show("blind");
+  });
+
+  $(".clickurl").click(function(eventobject) {
+    $("#urlbox").val($(this).attr("url"));
+    $('#submit').click();
+  });
+});
+
+</script>
+<title>Traceroute</title>
+<style type="text/css">
+    #map-canvas { height: 100% }
+    html { height: 100% }
+    body { height: 100%; margin: 0; padding: 0 }
+    .hacker {
+      font-family:sans-serif;
+      color: #333333;
+      font-size:80%;
+    }
+    .hackerbox {
+      position: absolute;
+      top:20px;
+      right:20px;
+      width:300px;
+      z-index:100;
+
+      border-radius: 8px;
+      padding: 2px;
+      border-width: 3px;
+
+      /*font-family:"Courier New", "Lucida Console", monospace;*/
+      color: #CCCCCC;
+      background-color: black;
+      border-style: solid;
+      border-color: #001117;
+    }
+    .hackerbox p {
+      font-size:80%;
+      color: #CCCCCC;
+    }
+    .hackertyper {
+      border-color: #001117;
+      color: #CCCCCC;
+      background-color: #001117;
+      width: 120px;
+      font-family:"Courier New", "Lucida Console", monospace !important;
+      font-size:80% !important;
+    }
+    .hackerbutton {
+      border-color: #AAAAAA;
+      color: #CCCCCC;
+      background-color: #001117;
+      font-family:"Courier New", "Lucida Console", monospace !important;
+      font-size:80% !important;
+    }
+    .smallertext {
+      font-size:80%;
+      font-family:"Courier New", "Lucida Console", monospace !important;
+    }
+    #loading {
+      position: absolute;
+      bottom:50px;
+      left:50px;
+      width:150px;
+      z-index:100;
+    }
+    ::-webkit-input-placeholder {color:#556677; font-style:italic;}
+    :-moz-placeholder {color:#556677; font-style:italic;}
+    ::-moz-placeholder {color:#556677; font-style:italic;}
+    :-ms-input-placeholder {color:#556677; font-style:italic;}
+
+    .link {
+      color:#556677;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .clickurl {
+      color:#CCCCCC;
+      text-decoration: underline;
+      cursor: pointer;
+      font-family:"Courier New", "Lucida Console", monospace !important;
+    }
+    #errorbox {
+      color:#DDDDDD;
+      font-size:70%;
+    }
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+<div id="loading">
+  <img src="http://csvoss.scripts.mit.edu/traceroute/ajax-loader.gif" />
+</div>
+
+<div id="tabs" class="hackerbox">
+  <ul>
+    <li><a href="#tabs-2" class="smallertext">traceroute</a></li>
+  </ul>
+  <div id="tabs-2">
+    <p>
+      Trace the path packets take through the Internet, from a <a href="http://scripts.mit.edu">server at MIT</a> to any website.
+    </p>
+    <input type="text" name="url" id="urlbox" class="hackertyper">
+    <input type="submit" value="trace" id="submit" class="hackerbutton"><br/>
+    <i><span id="errorbox"></span></i>
+    <p>Suggestions <b><span id="show" class="link">[show]</span><span id="hide" class="link">[hide]</span></b><br>
+      <span id="suggestions">
+             ‣  Akamai, <span class="clickurl" url="akamai.com">akamai.com</span>
+        <br> ‣  Caltech, <span class="clickurl" url="caltech.edu">caltech.edu</span>
+        <br> ‣  Chile, <span class="clickurl" url="gob.cl">gob.cl</span>
+        <br> ‣  CERN, <span class="clickurl" url="cern.ch">cern.ch</span>
+        <br> ‣  Google, <span class="clickurl" url="google.com">google.com</span>
+        <br> ‣  Harvard, <span class="clickurl" url="harvard.edu">harvard.edu</span>
+        <br> ‣  India, <span class="clickurl" url="india.gov.in">india.gov.in</span>
+        <br> ‣  Korea, <span class="clickurl" url="korea.net">korea.net</span>
+        <br> ‣  NSF, <span class="clickurl" url="nsf.gov">nsf.gov</span>
+        <br> ‣  Princeton, <span class="clickurl" url="princeton.edu">princeton.edu</span>
+        <br> ‣  Russia, <span class="clickurl" url="government.ru">government.ru</span>
+        <br> ‣  Stanford, <span class="clickurl" url="stanford.edu">stanford.edu</span>
+        <br> ‣  United Nations, <span class="clickurl" url="un.org">un.org</span>
+        <br> ‣  Wikipedia, <span class="clickurl" url="wikipedia.org">wikipedia.org</span>
+     </span>
+     <br>
+     <small>Uses GeoLite data from <a href="http://www.maxmind.com">MaxMind</a>.</small>
+    </p>
+  </div>
+</div>
+
+
+<div id="map-canvas"/>
+
+
+</body>
+
+
+</html>
